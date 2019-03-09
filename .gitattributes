@@ -1,0 +1,29 @@
+# Auto detect text files and perform LF normalization
+# Setting default behaviour, in case users don't have core.autocrlf set.
+* text eol=lf
+/.idea/* text eol=auto
+
+# These files are text and should be normalized (Convert crlf => lf)
+*.java          text
+*.kt            text
+*.properties    text
+*.sh            text
+*.txt           text
+*.xml           text
+*.yml           text
+
+# Explicit LF only line endings
+*.sh text eol=lf
+*.sql text eol=lf
+
+# These files are binary and should be left untouched
+*.class         binary
+*.dll           binary
+*.gif           binary
+*.ico           binary
+*.jar           binary
+*.jpg           binary
+*.jpeg          binary
+*.png           binary
+*.so            binary
+*.zip           binary

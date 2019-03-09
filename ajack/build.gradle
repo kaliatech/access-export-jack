@@ -1,6 +1,7 @@
 plugins {
-    id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.21'
+  id 'com.github.johnrengelman.shadow' version '5.0.0'
+  id 'java'
+  id 'org.jetbrains.kotlin.jvm' version '1.3.21'
 }
 
 group 'com.kaliatech'
@@ -9,17 +10,67 @@ version '1.0-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
-    mavenCentral()
+  mavenCentral()
+}
+
+jar {
+  manifest {
+    attributes 'Main-Class': 'com.kaliatech.AjackKt'
+  }
+  //from { configurations.com.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+shadowJar {
+  baseName = 'ajack'
+}
+
+configurations {
+  generateConfig
+}
+
+test {
+  useJUnitPlatform()
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+  runtime "ch.qos.logback:logback-classic:1.2.3"
+
+  compile "com.healthmarketscience.jackcess:jackcess:3.0.0"
+
+  implementation "info.picocli:picocli:3.9.5"
+  generateConfig 'info.picocli:picocli-codegen:3.9.5'
+
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.0'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.0'
+
+  testCompile "org.jetbrains.kotlin:kotlin-test-junit5:1.3.21"
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
+  implementation "org.slf4j:slf4j-api:1.7.26"
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+  kotlinOptions.jvmTarget = "1.8"
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+  kotlinOptions.jvmTarget = "1.8"
 }
+
+// https://github.com/remkop/picocli/blob/master/picocli-codegen/README.md
+task(generateGraalReflectionConfig, dependsOn: 'classes', type: JavaExec) {
+  main = 'picocli.codegen.aot.graalvm.ReflectionConfigGenerator'
+  classpath = configurations.generateConfig + sourceSets.main.runtimeClasspath
+
+  // Errors with native graalvm about missing org.fusesource.jansi.AnsiConsole. I'm guessing it's because this library
+  // is only pulled in on windows. This would work if the gradle build was always run on linux before doing the native
+  // compile:
+//  if (!System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+//    systemProperty "picocli.codegen.excludes", ".*AnsiConsole"
+//  }
+  // But for convenience, and because graalvm native not yet available on windows anyways, we just always exclude it:
+  systemProperty "picocli.codegen.excludes", ".*AnsiConsole"
+
+  def outputFile = new File(project.buildDir, 'cli-reflect.json')
+  args = ["--output=$outputFile", 'com.kaliatech.ajack.ExportCommand']
+}
+assemble.dependsOn generateGraalReflectionConfig
