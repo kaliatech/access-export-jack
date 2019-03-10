@@ -10,9 +10,8 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.PrintWriter
 import java.nio.file.Files
-import java.nio.file.InvalidPathException
 import java.nio.file.Path
-import kotlin.test.Ignore
+import java.nio.file.Paths
 
 
 class ExporterArgsVerifierTest {
@@ -36,7 +35,7 @@ class ExporterArgsVerifierTest {
     }
 
     @Test
-    fun `Export with dest`() {
+    fun `Export with valid dest`() {
         val exportDir = tempDir!!.resolve("export")
         val mdbFile = createFakeMdb(tempDir)
 
@@ -50,36 +49,35 @@ class ExporterArgsVerifierTest {
 
     }
 
+    @Test
+    fun `Export with bad dest`() {
+        val cmd = ExportCommand()
+        cmd.mdbFilePath = createFakeMdb(tempDir).toString()
+        cmd.destDir = "b@d::test/bad"
+        Assertions.assertFalse(verify(cmd))
+    }
+
+    @Test
+    fun `Export when dest already exists and is not empty`() {
+        //kotlin.test.assertFailsWith(FileAlreadyExistsException::class, "Should fail with existing path") {
+        val cmd = ExportCommand()
+        cmd.mdbFilePath = createFakeMdb(tempDir).toString()
+        cmd.destDir = tempDir?.resolve("export").toString()
+
+        // Write temp file to make sure is not empty
+        Files.createDirectories(Paths.get(cmd.destDir))
+        val randFile = Paths.get(cmd.destDir, "tmp.txt").toFile()
+        PrintWriter(randFile).use { out -> out.println("test") }
+
+        Assertions.assertTrue(verify(cmd))
+    }
+
     private fun createFakeMdb(tempDir: Path?): File? {
         val mdbDir = tempDir!!.resolve("mdb")
         val mdbFile = mdbDir!!.resolve("fakedb.mdb").toFile()
         Files.createDirectories(mdbDir)
         PrintWriter(mdbFile).use { out -> out.println("test") }
         return mdbFile
-    }
-
-    /**
-     * This might result with different exception on other platforms. Not really an important test, so ignored.
-     */
-    @Ignore
-    @Test
-    fun `Export with bad dest`() {
-        kotlin.test.assertFailsWith(InvalidPathException::class, "Should fail with invalid path") {
-            val cmd = ExportCommand()
-            cmd.mdbFilePath = createFakeMdb(tempDir).toString()
-            cmd.destDir = "b@d::test/bad"
-            verify(cmd)
-        }
-    }
-
-    @Test
-    fun `Export when dest already exists`() {
-        kotlin.test.assertFailsWith(FileAlreadyExistsException::class, "Should fail with existing path") {
-            val cmd = ExportCommand()
-            cmd.mdbFilePath = createFakeMdb(tempDir).toString()
-            cmd.destDir = tempDir.toString()
-            verify(cmd)
-        }
     }
 
 }

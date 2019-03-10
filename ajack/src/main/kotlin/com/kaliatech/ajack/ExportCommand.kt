@@ -3,6 +3,8 @@
  */
 package com.kaliatech.ajack
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import picocli.CommandLine.*
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -11,6 +13,8 @@ import java.time.format.DateTimeFormatter
 // TODO: inject version at build time
 @Command(name = "ajack", version = ["ajack v0.0.0"], footer = ["Copyright(c) 2019"])
 class ExportCommand : Runnable {
+
+    private val log: Logger = LoggerFactory.getLogger(ExportCommand::class.java)
 
     private val dtf = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss")
 
@@ -35,6 +39,12 @@ class ExportCommand : Runnable {
     var destDir: String = "./export-" + dtf.format(ZonedDateTime.now())
 
     @Option(
+        names = ["-o", "--overwrite"],
+        description = ["Overwrite any existing files."]
+    )
+    var overwrite: Boolean = false
+
+    @Option(
         names = ["-f", "--format"],
         description = ["Output format. Valid values: \${COMPLETION-CANDIDATES}"]
     )
@@ -52,11 +62,18 @@ class ExportCommand : Runnable {
     var mdbFilePath: String? = null
 
     override fun run() {
-        verify(this)
 
-        val exporter = Exporter()
-        exporter.export(this)
+        if (!verify(this)) {
+            System.exit(-1)
+        }
 
-        System.exit(0)
+        try {
+            val exporter = Exporter()
+            exporter.export(this)
+        } catch (e: Exception) {
+            log.error("Uncaught error during export.", e)
+            System.exit(-1)
+        }
+
     }
 }
