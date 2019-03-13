@@ -14,6 +14,7 @@ import java.io.File
 import java.io.PrintWriter
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 
 class Exporter {
 
@@ -128,7 +129,7 @@ class Exporter {
         val prefixedFilename =
             if (applyPrefix && StringUtils.isNotBlank(cmd.prefix)) cmd.prefix + filename else filename
         val caseFilename = if (cmd.caseSensitive) prefixedFilename else prefixedFilename.toLowerCase()
-        val filePath = Path.of(cmd.destDir, caseFilename)
+        val filePath = Paths.get(cmd.destDir).resolve(caseFilename)
         if (Files.exists(filePath) && !cmd.overwrite) {
             log.info("  {} - (file exists, skipping)", filePath)
             return null
@@ -141,7 +142,7 @@ class Exporter {
         // TODO: Eventually factory according to cmd.format
         val ddlGenerator = DdlGeneratorPostgres(db)
         val schemaFilename = if (StringUtils.isNotBlank(cmd.prefix)) cmd.prefix + "schema.ddl" else "schema.ddl"
-        val schemaExportFile = Path.of(cmd.destDir, schemaFilename)
+        val schemaExportFile = Paths.get(cmd.destDir).resolve(schemaFilename)
         if (!cmd.overwrite && Files.exists(schemaExportFile)) {
             log.info("  {} - (file exists, skipping)", schemaExportFile.fileName)
         } else {
