@@ -51,6 +51,18 @@ class ExportCommand : Runnable {
     var format: ExportFormat = ExportFormat.POSTGRES_CSV
 
     @Option(
+        names = ["-cs", "--case-sensitive"],
+        description = ["Case sensitive DDL. Default false."]
+    )
+    var caseSensitive: Boolean = false
+
+    @Option(
+        names = ["-p", "--prefix"],
+        description = ["Table name prefix."]
+    )
+    var prefix: String = ""
+
+    @Option(
         names = ["-t", "--table"],
         paramLabel = "table",
         split = ",",
