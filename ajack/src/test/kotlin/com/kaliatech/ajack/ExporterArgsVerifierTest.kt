@@ -53,7 +53,7 @@ class ExporterArgsVerifierTest {
     fun `Export with bad dest`() {
         val cmd = ExportCommand()
         cmd.mdbFilePath = createFakeMdb(tempDir).toString()
-        cmd.destDir = "b@d::test/bad"
+        cmd.destDir = "\u0000"
         Assertions.assertFalse(verify(cmd))
     }
 
