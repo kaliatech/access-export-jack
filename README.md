@@ -2,9 +2,12 @@
 Export data from Microsoft Access Database (mdb) files. MS Access is not required. Uses the [Jackcess](https://jackcess.sourceforge.io) library. Cross platform.
 
 ## Download 
+ * work-in-progress
+<!---
  * Linux-Native: [ajack-1.0.0-linux-x64.tar.gz](https://github.com/kaliatech/access-export-jack/releases) - Tested on Ubuntu-18.04.
  * OSX-Native: TBD
  * Java: [ajack-1.0.0.jar](https://github.com/kaliatech/access-export-jack/releases) - Anywhere with Java 8 or newer.
+--->
  
 The native linux version also works in the Windows Subsystem for Linux (WSL).
 
@@ -26,14 +29,22 @@ Creates a folder for holding all exported files. Defaults to "./export-yyyyMMddH
 
 ### Options
 ```console
-  Usage: ajack [-hv] [-d=<dir>] [-f=<format>] [-t=table[,table...]]... <mdb-file>
+  Usage: ajack [-hov] [-cs] [-d=<dir>] [-f=<format>] [-p=<prefix>]
+               [-cm=<String=String>]... [-t=table[,table...]]... <mdb-file>
+			   
         <mdb-file>            mdb file
+        -cm, --column=<String=String>
+                              Rename specific columns.
+        -cs, --case-sensitive Case sensitive DDL. Default false.
     -d, --destination=<dir>   Output directory. Default: ./export-yyyyMMdd-HHmmss
     -f, --format=<format>     Output format. Valid values: POSTGRES_CSV
     -h, --help                print this help and exit
+    -o, --overwrite           Overwrite any existing files.
+    -p, --prefix=<prefix>     Table name prefix.
     -t, --table=table[,table...]
                               Specific tables to export. Default: all
     -v, --version             print version and exit
+	
   Copyright(c) 2019
 ```
 
