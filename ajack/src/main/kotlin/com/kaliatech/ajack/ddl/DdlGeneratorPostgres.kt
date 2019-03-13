@@ -7,7 +7,12 @@ import com.healthmarketscience.jackcess.*
 
 class DdlGeneratorPostgres(db: Database) : DdlGenerator(db) {
 
-    override fun generateTable(table: Table, prefix: String, caseSensitive: Boolean): String {
+    override fun generateTable(
+        table: Table,
+        prefix: String,
+        caseSensitive: Boolean,
+        columnRenames: Map<String, String>
+    ): String {
         val str = StringBuilder()
 
         var tableName = prefix + table.name
@@ -23,7 +28,12 @@ class DdlGeneratorPostgres(db: Database) : DdlGenerator(db) {
             //sqlColName = sqlColName.replace("[\\\\s+]", "")
 
             sqlColName = sqlColName.replace("[^A-Za-z0-9\\-_]".toRegex(), "_")
-            str.append("  $sqlColName " + getColDef(col))
+
+            if (columnRenames.containsKey(sqlColName)) {
+                sqlColName = columnRenames.get(sqlColName)
+            }
+
+            str . append ("  $sqlColName " + getColDef(col))
 
             val props: PropertyMap = col.properties
             if (props.get("REQUIRED")?.value == true) {

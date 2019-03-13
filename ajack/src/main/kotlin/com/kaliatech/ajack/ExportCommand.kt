@@ -63,6 +63,12 @@ class ExportCommand : Runnable {
     var prefix: String = ""
 
     @Option(
+        names = ["-cm", "--column"],
+        description = ["Rename specific columns."]
+    )
+    var columnRenames: Map<String, String> = HashMap()
+
+    @Option(
         names = ["-t", "--table"],
         paramLabel = "table",
         split = ",",

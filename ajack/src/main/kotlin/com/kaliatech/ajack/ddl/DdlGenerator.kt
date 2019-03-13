@@ -15,13 +15,18 @@ abstract class DdlGenerator(db: Database) {
         val fksDdl = StringBuilder()
         for (tableName in cmd.tables) {
             val t = db.getTable(tableName);
-            tablesDdl.append(generateTable(t, cmd.prefix, cmd.caseSensitive))
+            tablesDdl.append(generateTable(t, cmd.prefix, cmd.caseSensitive, cmd.columnRenames))
             fksDdl.append(getForeignKeyDdl(t))
         }
         return tablesDdl.append(fksDdl).toString()
     }
 
-    abstract fun generateTable(table: Table, prefix: String, caseSensitive: Boolean): String
+    abstract fun generateTable(
+        table: Table,
+        prefix: String,
+        caseSensitive: Boolean,
+        columnRenames: Map<String, String>
+    ): String
 
     abstract fun getForeignKeyDdl(table: Table): String
 }
