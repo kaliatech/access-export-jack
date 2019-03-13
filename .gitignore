@@ -1,2 +1,3 @@
 /docker/postgres/db-password.txt
-/working/exports
+/env
+/working
