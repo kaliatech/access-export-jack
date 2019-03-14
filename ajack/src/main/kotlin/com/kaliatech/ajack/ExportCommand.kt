@@ -40,7 +40,7 @@ class ExportCommand : Runnable {
 
     @Option(
         names = ["-o", "--overwrite"],
-        description = ["Overwrite any existing files."]
+        description = ["Overwrite any existing files"]
     )
     var overwrite: Boolean = false
 
@@ -52,21 +52,27 @@ class ExportCommand : Runnable {
 
     @Option(
         names = ["-cs", "--case-sensitive"],
-        description = ["Case sensitive DDL. Default false."]
+        description = ["Case sensitive DDL. Default: false"]
     )
     var caseSensitive: Boolean = false
 
     @Option(
         names = ["-p", "--prefix"],
-        description = ["Table name prefix."]
+        description = ["Table name prefix"]
     )
     var prefix: String = ""
 
     @Option(
         names = ["-cm", "--column"],
-        description = ["Rename specific columns."]
+        description = ["Rename specific columns"]
     )
     var columnRenames: Map<String, String> = HashMap()
+
+    @Option(
+        names = ["--trim"],
+        description = ["Trim empty space around data. Default: true"]
+    )
+    var trim: Boolean = true
 
     @Option(
         names = ["-t", "--table"],

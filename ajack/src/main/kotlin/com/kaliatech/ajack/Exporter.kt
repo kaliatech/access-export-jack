@@ -3,8 +3,10 @@
  */
 package com.kaliatech.ajack
 
+import com.healthmarketscience.jackcess.Column
 import com.healthmarketscience.jackcess.Database
 import com.healthmarketscience.jackcess.DatabaseBuilder
+import com.healthmarketscience.jackcess.util.ExportFilter
 import com.healthmarketscience.jackcess.util.ExportUtil
 import com.kaliatech.ajack.ddl.DdlGeneratorPostgres
 import org.apache.commons.lang3.StringUtils
@@ -108,18 +110,24 @@ class Exporter {
             val table = db.getTable(tableName)
             log.info("  {} ({} rows)", exportFile.fileName, table.rowCount)
 
+            if (cmd.trim) {
+                expBuilder.setFilter(object : ExportFilter {
+                    override fun filterColumns(columns: MutableList<Column>?): MutableList<Column> {
+                        return columns!!
+                    }
 
-            //TBD if needed:
-//            expBuilder.setFilter(object : ExportFilter {
-//                override fun filterColumns(columns: MutableList<Column>?): MutableList<Column> {
-//                    return columns!!
-//                }
-//
-//                override fun filterRow(row: Array<Any>?): Array<Any> {
-//                    return row!!
-//                }
-//
-//            })
+                    override fun filterRow(row: Array<Any>): Array<Any> {
+                        for (i in 0 until row.size) {
+                            if (row[i] is String) {
+                                if (cmd.trim) {
+                                    row[i] = StringUtils.trim(row[i].toString())
+                                }
+                            }
+                        }
+                        return row
+                    }
+                })
+            }
 
             expBuilder.exportFile(exportFile.toFile())
         }
