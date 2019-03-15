@@ -2,8 +2,10 @@
 Export data from Microsoft Access Database (mdb) files. MS Access is not required. Uses the [Jackcess](https://jackcess.sourceforge.io) library. Cross platform.
 
 ## Download 
- * Linux-Native: [ajack-1.0.0-linux-x64.tar.gz](https://github.com/kaliatech/access-export-jack/releases/download/v1.0.0/ajack-1.0.0-linux-x64.tar.gz) - Tested on Ubuntu-18.04.
- * Java: [ajack-1.0.0.jar](https://github.com/kaliatech/access-export-jack/releases/download/v1.0.0/ajack-1.0.0.jar) - Anywhere with Java 8 or newer.
+ * [ajack-1.0.0-linux-x64.tar.gz](https://github.com/kaliatech/access-export-jack/releases/download/v1.0.0/ajack-1.0.0-linux-x64.tar.gz)  (8.07 MB)
+   * - Linux command line executable. Tested on ubuntu 18.10. Runs in WSL on Windows.
+ * [ajack-1.0.0.jar](https://github.com/kaliatech/access-export-jack/releases/download/v1.0.0/ajack-1.0.0.jar) (4.05 MB)
+   * Executable Java jar requring Java 8 or newer.
  
 The native linux version also works in the Windows Subsystem for Linux (WSL).
 
