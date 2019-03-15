@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter
 
 
 // TODO: inject version at build time
-@Command(name = "ajack", version = ["ajack v0.0.0"], footer = ["Copyright(c) 2019"])
+@Command(name = "ajack", version = ["ajack v1.1.0-snapshot"], footer = ["Copyright(c) 2019"])
 class ExportCommand : Runnable {
 
     private val log: Logger = LoggerFactory.getLogger(ExportCommand::class.java)
